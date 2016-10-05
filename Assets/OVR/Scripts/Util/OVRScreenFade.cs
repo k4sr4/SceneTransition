@@ -66,10 +66,16 @@ public class OVRScreenFade : MonoBehaviour
 		StartCoroutine(FadeIn());
 	}
 
-	/// <summary>
-	/// Cleans up the fade material
-	/// </summary>
-	void OnDestroy()
+    public void Teleport(float time)
+    {
+        fadeTime = time;
+        StartCoroutine(FadeIn());
+    }
+
+    /// <summary>
+    /// Cleans up the fade material
+    /// </summary>
+    void OnDestroy()
 	{
 		if (fadeMaterial != null)
 		{
@@ -81,8 +87,8 @@ public class OVRScreenFade : MonoBehaviour
 	/// Fades alpha from 1.0 to 0.0
 	/// </summary>
 	IEnumerator FadeIn()
-	{
-		float elapsedTime = 0.0f;
+	{        
+        float elapsedTime = 0.0f;
 		fadeMaterial.color = fadeColor;
 		Color color = fadeColor;
 		isFading = true;
