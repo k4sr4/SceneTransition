@@ -14,6 +14,8 @@ public class SceneTransition : MonoBehaviour {
     public GameObject centerEye;
 
     Vector3 finalRotation;
+    Vector3 initialPos;
+    Vector3 finalPos;
 
     float xDiv;
     float zDiv;
@@ -31,6 +33,9 @@ public class SceneTransition : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        initialPos = transform.position;
+        finalPos = destination;
+
         finalRotation = new Vector3(transform.rotation.x, transform.rotation.y + rotation, transform.rotation.z);
 
         float xDifference = destination.x - transform.position.x;
@@ -49,7 +54,26 @@ public class SceneTransition : MonoBehaviour {
 	void Update () {
         if (env == Environment.BigLarge)
         {
-            destination = new Vector3(375f, 1.01f, 200f);
+            if (transform.position != initialPos)
+            {
+                destination = initialPos;
+            }
+            else
+            {
+                destination = new Vector3(375f, 1.01f, 200f);
+            }
+        }
+
+        else
+        {
+            if (transform.position != initialPos)
+            {
+                destination = initialPos;
+            }
+            else
+            {
+                destination = finalPos;
+            }
         }
 
         if (current == State.Teleport)
