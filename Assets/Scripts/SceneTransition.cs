@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.ImageEffects;
+using UnityStandardAssets.Utility;
 using System.Collections;
 
 public class SceneTransition : MonoBehaviour {
@@ -25,6 +26,9 @@ public class SceneTransition : MonoBehaviour {
     public enum State { Teleport, Animated, Pulsed};
     public State current = State.Teleport;
 
+    public enum Environment { SmallShort, BigShort, BigLarge };
+    public Environment env = Environment.SmallShort;
+
     // Use this for initialization
     void Start () {
         finalRotation = new Vector3(transform.rotation.x, transform.rotation.y + rotation, transform.rotation.z);
@@ -38,11 +42,16 @@ public class SceneTransition : MonoBehaviour {
         rotateDiv = rotateDifference / pulseNum;
 
         newPos = transform.position;
-        newRot = transform.eulerAngles;
+        newRot = transform.eulerAngles;        
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        if (env == Environment.BigLarge)
+        {
+            destination = new Vector3(375f, 1.01f, 200f);
+        }
+
         if (current == State.Teleport)
         {
             if (Input.GetButtonDown("Fire1"))
@@ -103,7 +112,21 @@ public class SceneTransition : MonoBehaviour {
         }
         else if (current == State.Animated)
         {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                GetComponent<AutoMoveAndRotate>().move = true;
+            }
 
+            if (Input.GetButtonDown("Fire2"))
+            {
+                GetComponent<AutoMoveAndRotate>().rotate = true;
+            }
+
+            if (Input.GetButtonDown("Fire3"))
+            {
+                GetComponent<AutoMoveAndRotate>().move = true;
+                GetComponent<AutoMoveAndRotate>().rotate = true;
+            }
         }
         else if (current == State.Pulsed)
         {            
@@ -148,7 +171,7 @@ public class SceneTransition : MonoBehaviour {
         }
 
         if (state == 1)
-        {
+        {            
             transform.position = dest;
         }
         else if (state == 2)
@@ -167,17 +190,17 @@ public class SceneTransition : MonoBehaviour {
             elapsedTime--;
             centerEye.GetComponent<Blur>().iterations = (int)(2 * elapsedTime);
         }
-
+        
         centerEye.GetComponent<Blur>().enabled = false;
-
+        
         if (current == State.Pulsed)
-        {
+        {            
             if (state == 1)
-            {
-                if (transform.position.z < destination.z)
-                {
+            {                
+                if (transform.position.x < destination.x)
+                {                    
                     yield return new WaitForSeconds(pulsedWait);
-                
+                    
                     newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
                     centerEye.GetComponent<Blur>().enabled = true;
                     StartCoroutine(FadeImage(1, newPos, newRot));
@@ -189,6 +212,7 @@ public class SceneTransition : MonoBehaviour {
                 {
                     yield return new WaitForSeconds(pulsedWait);
 
+                    Debug.Log("2");
                     newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
                     centerEye.GetComponent<Blur>().enabled = true;
                     StartCoroutine(FadeImage(2, destination, newRot));
@@ -196,7 +220,7 @@ public class SceneTransition : MonoBehaviour {
             }
             else if (state == 3)
             {
-                if ((transform.eulerAngles.y < rotation) && (transform.position.z < destination.z))
+                if ((transform.eulerAngles.y < rotation) && (transform.position.x < destination.x))
                 {
                     yield return new WaitForSeconds(pulsedWait);
 
@@ -205,7 +229,7 @@ public class SceneTransition : MonoBehaviour {
                     centerEye.GetComponent<Blur>().enabled = true;
                     StartCoroutine(FadeImage(3, newPos, newRot));
                 }
-                else if (transform.position.z < destination.z)
+                else if (transform.position.x < destination.x)
                 {
                     yield return new WaitForSeconds(pulsedWait);
 

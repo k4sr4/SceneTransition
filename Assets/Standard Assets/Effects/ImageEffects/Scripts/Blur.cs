@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using System.Collections;
 
 namespace UnityStandardAssets.ImageEffects
 {
@@ -17,9 +16,6 @@ namespace UnityStandardAssets.ImageEffects
         /// get large blurs. Value is usually between 0.5 and 1.0.
         [Range(0.0f,1.0f)]
         public float blurSpread = 0.6f;
-
-        public float fadeTime = 2.0f;
-        private YieldInstruction fadeInstruction = new WaitForEndOfFrame();
 
 
         // --------------------------------------------------------
@@ -107,25 +103,6 @@ namespace UnityStandardAssets.ImageEffects
             Graphics.Blit(buffer, destination);
 
             RenderTexture.ReleaseTemporary(buffer);
-        }
-
-        public void Teleport (float time)
-        {
-            fadeTime = time;            
-            StartCoroutine(FadeImage());
-        }
-
-        IEnumerator FadeImage()
-        {
-            float elapsedTime = 0.0f;
-
-            while (elapsedTime < fadeTime)
-            {
-                yield return fadeInstruction;
-                elapsedTime += Time.deltaTime;
-                iterations = (int)(1.0f - Mathf.Clamp01(elapsedTime / fadeTime));
-                Debug.Log(iterations);
-            }
         }
     }
 }

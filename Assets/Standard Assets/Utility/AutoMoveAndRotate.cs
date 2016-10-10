@@ -35,7 +35,7 @@ namespace UnityStandardAssets.Utility
             {
                 transform.Translate(moveUnitsPerSecond.value * deltaTime, moveUnitsPerSecond.space);
 
-                if (transform.position.z > destination)
+                if (transform.position.x > destination)
                 {
                     move = false;
                 }
