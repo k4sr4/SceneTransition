@@ -10,10 +10,10 @@ namespace UnityStandardAssets.Utility
         public bool ignoreTimescale;
         private float m_LastRealTime;
 
-        public Vector3 destination;
+        public float destination;
         public float rotation;
         public bool move = false;
-
+        public bool rotate = false;
 
         private void Start()
         {
@@ -23,24 +23,31 @@ namespace UnityStandardAssets.Utility
 
         // Update is called once per frame
         private void Update()
-        {
+        {            
+            float deltaTime = Time.deltaTime;
+            if (ignoreTimescale)
+            {
+                deltaTime = (Time.realtimeSinceStartup - m_LastRealTime);
+                m_LastRealTime = Time.realtimeSinceStartup;
+            }
+
             if (move)
             {
-                float deltaTime = Time.deltaTime;
-                if (ignoreTimescale)
-                {
-                    deltaTime = (Time.realtimeSinceStartup - m_LastRealTime);
-                    m_LastRealTime = Time.realtimeSinceStartup;
-                }
                 transform.Translate(moveUnitsPerSecond.value * deltaTime, moveUnitsPerSecond.space);
-                transform.Rotate(rotateDegreesPerSecond.value * deltaTime, moveUnitsPerSecond.space);
 
-                if (transform.position == destination)
+                if (transform.position.z > destination)
                 {
                     move = false;
                 }
+            }
 
+            if (rotate){
+                transform.Rotate(rotateDegreesPerSecond.value * deltaTime, moveUnitsPerSecond.space);
 
+                if (transform.eulerAngles.y > rotation)
+                {                    
+                    rotate = false;
+                }
             }
         }
 
