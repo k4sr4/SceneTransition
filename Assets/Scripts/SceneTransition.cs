@@ -66,7 +66,7 @@ public class SceneTransition : MonoBehaviour {
 
         else
         {
-            if (transform.position != initialPos)
+            if (transform.position != initialPos && current == State.Teleport)
             {
                 destination = initialPos;
             }
@@ -235,8 +235,7 @@ public class SceneTransition : MonoBehaviour {
                 if (transform.eulerAngles.y < rotation)
                 {
                     yield return new WaitForSeconds(pulsedWait);
-
-                    Debug.Log("2");
+                    
                     newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
                     centerEye.GetComponent<Blur>().enabled = true;
                     StartCoroutine(FadeImage(2, destination, newRot));
