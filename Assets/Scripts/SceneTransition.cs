@@ -60,7 +60,7 @@ public class SceneTransition : MonoBehaviour {
             }
             else
             {
-                destination = new Vector3(375f, 1.01f, 200f);
+                destination = new Vector3(245f, 1.01f, -95f);
             }
         }
 
