@@ -24,6 +24,7 @@ public class SceneTransition : MonoBehaviour {
     Vector3 newRot;
     public float pulsedWait = 1;
     public int pulseNum = 5;
+    bool pulseForward = true;
 
     public enum State { Teleport, Animated, Pulsed};
     public State current = State.Teleport;
@@ -129,6 +130,7 @@ public class SceneTransition : MonoBehaviour {
             if (Input.GetButtonDown("Fire1"))
             {
                 GetComponent<AutoMoveAndRotate2>().move = true;
+                FinalCheck();
             }
 
             if (Input.GetButtonDown("Fire2"))
@@ -140,6 +142,7 @@ public class SceneTransition : MonoBehaviour {
             {
                 GetComponent<AutoMoveAndRotate2>().move = true;
                 GetComponent<AutoMoveAndRotate2>().rotate = true;
+                FinalCheck();
             }
         }
         else if (current == State.Pulsed)
@@ -181,16 +184,36 @@ public class SceneTransition : MonoBehaviour {
             {
                 destination = initialPos;
             }
-            else if (transform.position.x >= destination.x && current == State.Animated)
-            {
-                Debug.Log("HHH");
-                destination = initialPos;
-                GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value = new Vector3(-GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.x, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.y, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.z);
-            }
-            else
+            else if (transform.position == initialPos && current == State.Teleport)
             {
                 destination = finalPos;
             }
+            else if (transform.position.x >= destination.x && current == State.Animated && GetComponent<AutoMoveAndRotate2>().forward)
+            {                
+                GetComponent<AutoMoveAndRotate2>().destination = initialPos.x;
+                GetComponent<AutoMoveAndRotate2>().forward = false;
+                GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value = new Vector3(-GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.x, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.y, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.z);
+            }
+            else if (transform.position.x <= destination.x && current == State.Animated && !GetComponent<AutoMoveAndRotate2>().forward)
+            {
+                GetComponent<AutoMoveAndRotate2>().destination = finalPos.x;
+                GetComponent<AutoMoveAndRotate2>().forward = true;
+                GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value = new Vector3(-GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.x, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.y, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.z);
+            }
+            else if (transform.position.x >= destination.x && current == State.Pulsed && pulseForward)
+            {
+                destination = initialPos;
+                xDiv *= -1;
+                zDiv *= -1;
+                pulseForward = false;
+            }
+            else if (transform.position.x <= destination.x && current == State.Pulsed && !pulseForward)
+            {
+                destination = finalPos;
+                xDiv *= -1;
+                zDiv *= -1;
+                pulseForward = true;
+            }            
         }
     }
 
@@ -231,15 +254,30 @@ public class SceneTransition : MonoBehaviour {
         if (current == State.Pulsed)
         {            
             if (state == 1)
-            {                
-                if (transform.position.x < destination.x)
-                {                    
-                    yield return new WaitForSeconds(pulsedWait);
-                    
-                    newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
-                    centerEye.GetComponent<Blur>().enabled = true;
-                    StartCoroutine(FadeImage(1, newPos, newRot));
+            {
+                if (pulseForward)
+                {
+                    if (transform.position.x < destination.x)
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
+
+                        newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(1, newPos, newRot));
+                    }
                 }
+                else
+                {
+                    if (transform.position.x > destination.x)
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
+
+                        newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(1, newPos, newRot));
+                    }
+                }
+                FinalCheck();
             }
             else if (state == 2)
             {
@@ -254,31 +292,63 @@ public class SceneTransition : MonoBehaviour {
             }
             else if (state == 3)
             {
-                if ((transform.eulerAngles.y < rotation) && (transform.position.x < destination.x))
+                if (pulseForward) 
                 {
-                    yield return new WaitForSeconds(pulsedWait);
+                    if ((transform.eulerAngles.y < rotation) && (transform.position.x < destination.x))
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
 
-                    newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
-                    newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
-                    centerEye.GetComponent<Blur>().enabled = true;
-                    StartCoroutine(FadeImage(3, newPos, newRot));
+                        newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                        newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(3, newPos, newRot));
+                    }
+                    else if (transform.position.x < destination.x)
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
+
+                        newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(1, newPos, newRot));
+                    }
+                    else if (transform.eulerAngles.y < rotation)
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
+
+                        newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(2, newPos, newRot));
+                    }
                 }
-                else if (transform.position.x < destination.x)
+                else
                 {
-                    yield return new WaitForSeconds(pulsedWait);
+                    if ((transform.eulerAngles.y < rotation) && (transform.position.x > destination.x))
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
 
-                    newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
-                    centerEye.GetComponent<Blur>().enabled = true;
-                    StartCoroutine(FadeImage(1, newPos, newRot));
-                }
-                else if (transform.eulerAngles.y < rotation)
-                {
-                    yield return new WaitForSeconds(pulsedWait);
+                        newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                        newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(3, newPos, newRot));
+                    }
+                    else if (transform.position.x > destination.x)
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
 
-                    newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
-                    centerEye.GetComponent<Blur>().enabled = true;
-                    StartCoroutine(FadeImage(2, newPos, newRot));
-                }
+                        newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(1, newPos, newRot));
+                    }
+                    else if (transform.eulerAngles.y < rotation)
+                    {
+                        yield return new WaitForSeconds(pulsedWait);
+
+                        newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(2, newPos, newRot));
+                    }
+                    FinalCheck();
+                }                
             }            
         }
     }

@@ -14,6 +14,7 @@ namespace UnityStandardAssets.Utility
         public float rotation;
         public bool move = false;
         public bool rotate = false;
+        public bool forward = true;
 
         private void Start()
         {
@@ -35,10 +36,19 @@ namespace UnityStandardAssets.Utility
             {
                 transform.Translate(moveUnitsPerSecond.value * deltaTime, moveUnitsPerSecond.space);
 
-                if (transform.position.x > destination)
+                if (forward)
                 {
-                    move = false;
-                    //GetComponent<SceneTransition>().FinalCheck();
+                    if (transform.position.x > destination)
+                    {
+                        move = false;
+                    }
+                }
+                else
+                {
+                    if (transform.position.x < destination)
+                    {
+                        move = false;
+                    }
                 }
             }
 
