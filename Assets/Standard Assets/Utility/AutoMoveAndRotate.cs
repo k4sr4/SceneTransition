@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace UnityStandardAssets.Utility
@@ -10,11 +10,6 @@ namespace UnityStandardAssets.Utility
         public bool ignoreTimescale;
         private float m_LastRealTime;
 
-        public float destination;
-        public float rotation;
-        public bool move = false;
-        public bool rotate = false;
-
         private void Start()
         {
             m_LastRealTime = Time.realtimeSinceStartup;
@@ -23,7 +18,7 @@ namespace UnityStandardAssets.Utility
 
         // Update is called once per frame
         private void Update()
-        {            
+        {
             float deltaTime = Time.deltaTime;
             if (ignoreTimescale)
             {
@@ -31,26 +26,18 @@ namespace UnityStandardAssets.Utility
                 m_LastRealTime = Time.realtimeSinceStartup;
             }
 
-            if (move)
-            {
-                transform.Translate(moveUnitsPerSecond.value * deltaTime, moveUnitsPerSecond.space);
-
-                if (transform.position.x > destination)
-                {
-                    move = false;
-                }
-            }
-
-            if (rotate){
-                transform.Rotate(rotateDegreesPerSecond.value * deltaTime, moveUnitsPerSecond.space);
-
-                if (transform.eulerAngles.y > rotation)
-                {                    
-                    rotate = false;
-                }
-            }
+            transform.Translate(moveUnitsPerSecond.value * deltaTime, moveUnitsPerSecond.space);
+            transform.Rotate(rotateDegreesPerSecond.value * deltaTime, moveUnitsPerSecond.space);
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "Boundary")
+            {                
+                moveUnitsPerSecond.value = new Vector3(-moveUnitsPerSecond.value.x, -moveUnitsPerSecond.value.y, -moveUnitsPerSecond.value.z);
+                rotateDegreesPerSecond.value = new Vector3(-rotateDegreesPerSecond.value.x, -rotateDegreesPerSecond.value.y, -rotateDegreesPerSecond.value.z);
+            }
+        }
 
         [Serializable]
         public class Vector3andSpace

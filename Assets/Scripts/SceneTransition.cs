@@ -64,18 +64,6 @@ public class SceneTransition : MonoBehaviour {
             }
         }
 
-        else
-        {
-            if (transform.position != initialPos && current == State.Teleport)
-            {
-                destination = initialPos;
-            }
-            else
-            {
-                destination = finalPos;
-            }
-        }
-
         if (current == State.Teleport)
         {
             if (Input.GetButtonDown("Fire1"))
@@ -94,6 +82,7 @@ public class SceneTransition : MonoBehaviour {
                 {
                     transform.position = destination;
                 }
+                FinalCheck();
             }
 
             if (Input.GetButtonDown("Fire2"))
@@ -132,24 +121,25 @@ public class SceneTransition : MonoBehaviour {
                     transform.position = destination;
                     transform.eulerAngles = finalRotation;
                 }
+                FinalCheck();
             }
         }
         else if (current == State.Animated)
         {
             if (Input.GetButtonDown("Fire1"))
             {
-                GetComponent<AutoMoveAndRotate>().move = true;
+                GetComponent<AutoMoveAndRotate2>().move = true;
             }
 
             if (Input.GetButtonDown("Fire2"))
             {
-                GetComponent<AutoMoveAndRotate>().rotate = true;
+                GetComponent<AutoMoveAndRotate2>().rotate = true;
             }
 
             if (Input.GetButtonDown("Fire3"))
             {
-                GetComponent<AutoMoveAndRotate>().move = true;
-                GetComponent<AutoMoveAndRotate>().rotate = true;
+                GetComponent<AutoMoveAndRotate2>().move = true;
+                GetComponent<AutoMoveAndRotate2>().rotate = true;
             }
         }
         else if (current == State.Pulsed)
@@ -180,6 +170,27 @@ public class SceneTransition : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.R))
         {
             Application.LoadLevel(Application.loadedLevel);
+        }
+    }
+
+    public void FinalCheck()
+    {
+        if (env != Environment.BigLarge)        
+        {
+            if (transform.position != initialPos && current == State.Teleport)
+            {
+                destination = initialPos;
+            }
+            else if (transform.position.x >= destination.x && current == State.Animated)
+            {
+                Debug.Log("HHH");
+                destination = initialPos;
+                GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value = new Vector3(-GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.x, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.y, -GetComponent<AutoMoveAndRotate2>().moveUnitsPerSecond.value.z);
+            }
+            else
+            {
+                destination = finalPos;
+            }
         }
     }
 
