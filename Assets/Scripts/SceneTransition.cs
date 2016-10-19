@@ -191,12 +191,16 @@ public class SceneTransition : MonoBehaviour {
         {
             if (Input.GetButtonDown("Fire1"))
             {
+                //Vector2 playerForward = new Vector2(transform.forward.x, transform.forward.z);
+                //Vector2 diff = new Vector2(disapearedObj.transform.position.x - transform.position.x, disapearedObj.transform.position.z - transform.position.z);
+                //float angle = Vector2.Angle(diff, playerForward);
+                //Debug.Log(angle * Mathf.Rad2Deg);
                 float xDiff = Mathf.Abs(transform.position.x - disapearedObj.transform.position.x);
-                float zDiff = Mathf.Abs(transform.position.z - disapearedObj.transform.position.z);
+                float zDiff = -(transform.position.z - disapearedObj.transform.position.z);
                 float angle = Mathf.Atan(zDiff / xDiff);
-                float angleDiff = Mathf.Abs(Mathf.Abs(transform.eulerAngles.y - 270) - (angle * Mathf.Rad2Deg));
-                Debug.Log(angle * Mathf.Rad2Deg);
-                Debug.Log(Mathf.Abs(transform.eulerAngles.y - 270));
+                float angleDiff = Mathf.Abs((transform.eulerAngles.y - 270) - (angle * Mathf.Rad2Deg));
+                //Debug.Log(angle * Mathf.Rad2Deg);
+                //Debug.Log((transform.eulerAngles.y - 270));
                 Debug.Log(angleDiff);                
             }
         }
