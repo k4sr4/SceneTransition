@@ -100,12 +100,18 @@
     <Compile Include="Assets\OVR\Scripts\Util\OVRSceneSampleController.cs" />
     <Compile Include="Assets\OVR\Scripts\Util\OVRScreenFade.cs" />
     <Compile Include="Assets\OVR\Scripts\Util\OVRWaitCursor.cs" />
+    <Compile Include="Assets\SampleScenes\First Person\Crosshairs\Script\BulletManager.cs" />
+    <Compile Include="Assets\SampleScenes\First Person\Crosshairs\Script\CrosshairManager.cs" />
+    <Compile Include="Assets\SampleScenes\First Person\Crosshairs\Script\GunManager.cs" />
+    <Compile Include="Assets\SampleScenes\First Person\Crosshairs\Script\UIManager.cs" />
+    <Compile Include="Assets\SampleScenes\First Person\Crosshairs\Script\WallManager.cs" />
     <Compile Include="Assets\Scripts\SceneTransition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\OVR\Resources\Unlit Transparent Color.shader" />
     <None Include="Assets\OVR\Shaders\OVRColorRampAlpha.shader" />
     <None Include="Assets\OVR\Shaders\Unlit Crosshair.shader" />
+    <None Include="Assets\SampleScenes\First Person\Crosshairs\Script\Shader\CrosshairShader.shader" />
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\BlurEffectConeTaps.shader" />
     <None Include="Assets\Standard Assets\Effects\Projectors\Guidelines.txt" />

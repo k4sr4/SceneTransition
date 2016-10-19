@@ -26,6 +26,14 @@ public class SceneTransition : MonoBehaviour {
     public int pulseNum = 5;
     bool pulseForward = true;
 
+    public GameObject[] dynamicObjs;
+    GameObject disapearedObj;
+    public GameObject reticle;
+    int pulseCounter = 0;
+
+    public bool testTransition = false;
+    bool clickNow = false;
+
     public enum State { Teleport, Animated, Pulsed};
     public State current = State.Teleport;
 
@@ -65,108 +73,131 @@ public class SceneTransition : MonoBehaviour {
             }
         }
 
-        if (current == State.Teleport)
+        if (!clickNow)
+        {
+            if (current == State.Teleport)
+            {
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    if (fadeToBlack)
+                    {
+                        centerEye.GetComponent<OVRScreenFade>().Teleport(blackTime);
+                        transform.position = destination;
+                    }
+                    else if (fade)
+                    {
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(1, destination, finalRotation));
+                    }
+                    else
+                    {
+                        transform.position = destination;
+                    }
+                    Disapear();
+                    FinalCheck();
+                }
+
+                if (Input.GetButtonDown("Fire2"))
+                {
+                    if (fadeToBlack)
+                    {
+                        centerEye.GetComponent<OVRScreenFade>().Teleport(blackTime);
+                        transform.eulerAngles = finalRotation;
+                    }
+                    else if (fade)
+                    {
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(2, destination, finalRotation));
+                    }
+                    else
+                    {
+                        transform.eulerAngles = finalRotation;
+                    }
+                    Disapear();
+                }
+
+                if (Input.GetButtonDown("Fire3"))
+                {
+                    if (fadeToBlack)
+                    {
+                        centerEye.GetComponent<OVRScreenFade>().Teleport(blackTime);
+                        transform.position = destination;
+                        transform.eulerAngles = finalRotation;
+                    }
+                    else if (fade)
+                    {
+                        centerEye.GetComponent<Blur>().enabled = true;
+                        StartCoroutine(FadeImage(3, destination, finalRotation));
+                    }
+                    else
+                    {
+                        transform.position = destination;
+                        transform.eulerAngles = finalRotation;
+                    }
+                    Disapear();
+                    FinalCheck();
+                }
+            }
+            else if (current == State.Animated)
+            {
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    GetComponent<AutoMoveAndRotate2>().move = true;
+                    Disapear();
+                    FinalCheck();
+                }
+
+                if (Input.GetButtonDown("Fire2"))
+                {
+                    GetComponent<AutoMoveAndRotate2>().rotate = true;
+                    Disapear();
+                }
+
+                if (Input.GetButtonDown("Fire3"))
+                {
+                    GetComponent<AutoMoveAndRotate2>().move = true;
+                    GetComponent<AutoMoveAndRotate2>().rotate = true;
+                    Disapear();
+                    FinalCheck();
+                }
+            }
+            else if (current == State.Pulsed)
+            {
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                    centerEye.GetComponent<Blur>().enabled = true;
+                    StartCoroutine(FadeImage(1, newPos, finalRotation));
+
+                }
+
+                if (Input.GetButtonDown("Fire2"))
+                {
+                    newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
+                    centerEye.GetComponent<Blur>().enabled = true;
+                    StartCoroutine(FadeImage(2, destination, newRot));
+                }
+
+                if (Input.GetButtonDown("Fire3"))
+                {
+                    newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
+                    newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
+                    centerEye.GetComponent<Blur>().enabled = true;
+                    StartCoroutine(FadeImage(3, newPos, newRot));
+                }
+            }
+        }
+        else
         {
             if (Input.GetButtonDown("Fire1"))
             {
-                if (fadeToBlack)
-                {
-                    centerEye.GetComponent<OVRScreenFade>().Teleport(blackTime);
-                    transform.position = destination;
-                }
-                else if (fade)
-                {
-                    centerEye.GetComponent<Blur>().enabled = true;
-                    StartCoroutine(FadeImage(1, destination, finalRotation));
-                }
-                else
-                {
-                    transform.position = destination;
-                }
-                FinalCheck();
-            }
-
-            if (Input.GetButtonDown("Fire2"))
-            {
-                if (fadeToBlack)
-                {
-                    centerEye.GetComponent<OVRScreenFade>().Teleport(blackTime);
-                    transform.eulerAngles = finalRotation;
-                }
-                else if (fade)
-                {
-                    centerEye.GetComponent<Blur>().enabled = true;
-                    StartCoroutine(FadeImage(2, destination, finalRotation));
-                }
-                else
-                {
-                    transform.eulerAngles = finalRotation;
-                }
-            }
-
-            if (Input.GetButtonDown("Fire3"))
-            {
-                if (fadeToBlack)
-                {
-                    centerEye.GetComponent<OVRScreenFade>().Teleport(blackTime);
-                    transform.position = destination;
-                    transform.eulerAngles = finalRotation;
-                }
-                else if (fade)
-                {
-                    centerEye.GetComponent<Blur>().enabled = true;
-                    StartCoroutine(FadeImage(3, destination, finalRotation));
-                }
-                else
-                {
-                    transform.position = destination;
-                    transform.eulerAngles = finalRotation;
-                }
-                FinalCheck();
-            }
-        }
-        else if (current == State.Animated)
-        {
-            if (Input.GetButtonDown("Fire1"))
-            {
-                GetComponent<AutoMoveAndRotate2>().move = true;
-                FinalCheck();
-            }
-
-            if (Input.GetButtonDown("Fire2"))
-            {
-                GetComponent<AutoMoveAndRotate2>().rotate = true;
-            }
-
-            if (Input.GetButtonDown("Fire3"))
-            {
-                GetComponent<AutoMoveAndRotate2>().move = true;
-                GetComponent<AutoMoveAndRotate2>().rotate = true;
-                FinalCheck();
-            }
-        }
-        else if (current == State.Pulsed)
-        {            
-            if (Input.GetButtonDown("Fire1"))
-            {                                
-                newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
-                centerEye.GetComponent<Blur>().enabled = true;
-                StartCoroutine(FadeImage(1, newPos, finalRotation));                
-            }
-
-            if (Input.GetButtonDown("Fire2"))
-            {
-                newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
-                centerEye.GetComponent<Blur>().enabled = true;
-                StartCoroutine(FadeImage(2, destination, newRot));
-            }
-
-            if (Input.GetButtonDown("Fire3"))
-            {
-                newPos = new Vector3(newPos.x + xDiv, newPos.y, newPos.z + zDiv);
-                newRot = new Vector3(newRot.x, newRot.y + rotateDiv, newRot.z);
-                centerEye.GetComponent<Blur>().enabled = true;
-                StartCoroutine(FadeImage(3, newPos, newRot)); 
+                float xDiff = Mathf.Abs(transform.position.x - disapearedObj.transform.position.x);
+                float zDiff = Mathf.Abs(transform.position.z - disapearedObj.transform.position.z);
+                float angle = Mathf.Atan(zDiff / xDiff);
+                float angleDiff = Mathf.Abs(Mathf.Abs(transform.eulerAngles.y - 270) - (angle * Mathf.Rad2Deg));
+                Debug.Log(angle * Mathf.Rad2Deg);
+                Debug.Log(Mathf.Abs(transform.eulerAngles.y - 270));
+                Debug.Log(angleDiff);                
             }
         }
 
@@ -174,6 +205,18 @@ public class SceneTransition : MonoBehaviour {
         {
             Application.LoadLevel(Application.loadedLevel);
         }
+    }
+
+    private void Disapear()
+    {
+        int index = Random.Range(0, 3);        
+        disapearedObj = dynamicObjs[index];
+        disapearedObj.GetComponent<MeshRenderer>().enabled = false;
+        disapearedObj.GetComponent<AutoMoveAndRotate>().enabled = false;
+        reticle.SetActive(true);
+
+        if (!testTransition)
+            clickNow = true;
     }
 
     public void FinalCheck()
@@ -276,7 +319,7 @@ public class SceneTransition : MonoBehaviour {
                         centerEye.GetComponent<Blur>().enabled = true;
                         StartCoroutine(FadeImage(1, newPos, newRot));
                     }
-                }
+                }                
                 FinalCheck();
             }
             else if (state == 2)
@@ -348,8 +391,14 @@ public class SceneTransition : MonoBehaviour {
                         StartCoroutine(FadeImage(2, newPos, newRot));
                     }
                     FinalCheck();
-                }                
-            }            
+                }       
+            }
+            pulseCounter++;
+            if (pulseCounter == pulseNum)
+            {
+                Disapear();
+                pulseCounter = 0;
+            }
         }
     }
 }

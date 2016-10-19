@@ -96,7 +96,8 @@ public class OVRScreenFade : MonoBehaviour
 		{
 			yield return fadeInstruction;
 			elapsedTime += Time.deltaTime;
-			color.a = 1.0f - Mathf.Clamp01(elapsedTime / fadeTime);
+            if (elapsedTime < fadeTime)
+			    color.a = 1.0f;
 			fadeMaterial.color = color;
 		}
 		isFading = false;

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Fort.unity
+- path: Assets/Scenes/Corridor.unity
   isLoaded: 1
   isActive: 1
